@@ -1,60 +1,46 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+import axios from 'axios';
+import cheerio from 'cheerio';
 
-const PAGE_URL = 'https://rizzos.notion.site/133463bc0b76802994e4c4a03a6cc89c?v=9779d0b44b944d8588bb219c42fc2bf5';
+const notionUrl = 'https://rizzos.notion.site/NQ-Levels-3b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b';  // Rizzo NQ page
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
-    const { data: html } = await axios.get(PAGE_URL, {
+    const { data: html } = await axios.get(notionUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
     });
+
     const $ = cheerio.load(html);
+    const pageText = $('body').text().toLowerCase();
 
-    // Extract header (e.g., "# NQ DAILY")
-    let symbol = 'NQ', timeframe = 'DAILY';
-    $('h1').each((i, el) => {
-      const headerText = $(el).text().trim();
-      const match = headerText.match(/#?\s*(\w+)\s+(\w+)/i);
-      if (match) {
-        symbol = match[1].toUpperCase();
-        timeframe = match[2].toUpperCase();
-      }
-    });
+    // Symbol/Timeframe (fallback if changed)
+    const symbol = pageText.includes('nq') ? 'NQ' : 'NQ';
+    const timeframe = pageText.includes('daily') ? 'DAILY' : 'DAILY';
 
-    // Parse bold numbers: <strong>25835</strong> or span.bold → extract \d+s?
+    // Robust level extraction: Regex for NQ prices (25xxx patterns + suffixes)
     const levels = [];
-    $('strong, .notion-semibold, [style*="font-weight: bold"]').each((i, el) => {
-      const boldText = $(el).text().trim();
-      const matches = boldText.match(/(\d+(?:\.\d+)?s?)/g);
-      if (matches) {
-        matches.forEach(numStr => {
-          const price = parseFloat(numStr.replace(/s?$/g, ''));
-          if (!isNaN(price) && price > 10000 && !levels.some(l => Math.abs(l.price - price) < 1)) {
-            levels.push({ price, raw: numStr });
-          }
-        });
-      }
-    });
+    const priceRegex = /(\d{5})(?:\s*[-–]\s*(\d{1,4}))?|(\d{5})(s?)/g;
+    let match;
+    const seen = new Set();
 
-    // Also scan all text for bold-like patterns (backup)
-    $('.notion-page-content').text().match(/(\*\*(\d+(?:\.\d+)?s?)\*\*)/g)?.forEach(match => {
-      const numStr = match.replace(/\*\*/g, '');
-      const price = parseFloat(numStr.replace(/s?$/g, ''));
-      if (!isNaN(price) && price > 10000 && !levels.some(l => Math.abs(l.price - price) < 1)) {
-        levels.push({ price, raw: numStr });
+    while ((match = priceRegex.exec(pageText)) !== null) {
+      let price = parseFloat(match[1] || match[3]);
+      if (price >= 25000 && price <= 30000 && !seen.has(price)) {
+        seen.add(price);
+        const raw = match[0].replace(/\s+/g, ' ').trim();
+        levels.push({ price: Math.round(price), raw });
       }
-    });
+    }
 
-    // Dedupe, sort, limit
-    const uniqueLevels = levels.sort((a, b) => a.price - b.price).slice(0, 20);
+    // Sort ascending
+    levels.sort((a, b) => a.price - b.price);
 
     res.json({
-      url: PAGE_URL,
+      url: notionUrl,
       symbol,
       timeframe,
-      levels: uniqueLevels
+      levels: levels.slice(0, 20)  // Top 20
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Scrape failed', details: error.message });
   }
-};
+}
