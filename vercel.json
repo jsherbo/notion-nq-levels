@@ -1,8 +1,0 @@
-{
-  "functions": {
-    "api/trading-levels.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 30
-    }
-  }
-}
