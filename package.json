@@ -1,15 +1,7 @@
 {
   "name": "notion-nq-levels",
   "version": "1.0.0",
-  "type": "commonjs",
   "dependencies": {
-    "@sparticuz/chromium": "131.0.2",
-    "puppeteer-core": "22.6.5"
-  },
-  "engines": {
-    "node": "20.x"
-  },
-  "scripts": {
-    "start": "node api/trading-levels.js"
+    "puppeteer": "21.5.2"
   }
 }
