@@ -1,7 +1,9 @@
 {
   "name": "notion-nq-levels",
   "version": "1.0.0",
+  "type": "commonjs",
   "dependencies": {
-    "puppeteer": "^23.5.3"
+    "puppeteer-core": "23.5.3",
+    "@sparticuz/chromium": "131.0.2"
   }
 }
