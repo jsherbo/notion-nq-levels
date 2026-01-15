@@ -2,7 +2,6 @@
   "name": "notion-nq-levels",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer-core": "19.11.1",
-    "chrome-aws-lambda": "10.1.0"
+    "puppeteer": "22.12.1"
   }
 }
