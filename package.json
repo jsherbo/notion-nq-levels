@@ -4,6 +4,6 @@
   "type": "commonjs",
   "dependencies": {
     "puppeteer-core": "23.5.3",
-    "@sparticuz/chromium": "131.0.2"
+    "@sparticuz/chromium": "131.0.0"
   }
 }
