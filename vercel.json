@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/trading-levels.js": {
-      "maxDuration": 20
+      "maxDuration": 30
     }
   }
 }
