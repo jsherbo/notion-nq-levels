@@ -1,0 +1,8 @@
+{
+  "name": "notion-scraper-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "api/trading-levels.js",
+  "scripts": { "vercel-build": "npm i" },
+  "dependencies": { "axios": "^1.7.2", "cheerio": "^1.0.0-rc.12" }
+}
