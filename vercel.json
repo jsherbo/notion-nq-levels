@@ -1,9 +1,7 @@
 {
   "functions": {
     "api/trading-levels.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 30
+      "maxDuration": 20
     }
-  },
-  "buildCommand": "npm install"
+  }
 }
