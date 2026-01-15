@@ -2,6 +2,7 @@
   "name": "notion-nq-levels",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer": "21.5.2"
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12"
   }
 }
